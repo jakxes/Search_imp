@@ -105,14 +105,29 @@ public class Search extends JFrame implements ActionListener {
 
 	public static ArrayList<File> searchFile(File dir, String find) {
 		File[] files = dir.listFiles();
+		ArrayList<File> matchesregex = new ArrayList<>();
+ 		for (File file : files) {
+			if(file.toString().matches(find)) {
+				matchesregex.add(file);
+			}
+		}
 		ArrayList<File> matches = new ArrayList<File>();
 		if (files != null) {
 			for (int i = 0; i < files.length; i++) {
-				if (files[i].getName().contains(find)) matches.add(files[i]);
-				if (files[i].isDirectory()) matches.addAll(searchFile(files[i], find)); 
+				
+				if (files[i].getName().contains(find)) {
+					matches.add(files[i]);
+				}
+				if (files[i].isDirectory())
+					matches.addAll(searchFile(files[i], find)); 
+				}
 			}
+		if(matchesregex.contains(find) && matches.contains(find)) {
+			return matchesregex;
+		} else {
+			return matches;
 		}
-		return matches;
+		
 	}
 
 }

@@ -117,17 +117,24 @@ public class Search extends JFrame implements ActionListener {
 				
 				if (files[i].getName().contains(find)) {
 					matches.add(files[i]);
-				}
+				
 				if (files[i].isDirectory())
 					matches.addAll(searchFile(files[i], find)); 
-				}
+				
 			}
-		if(matchesregex.contains(find) && matches.contains(find)) {
+		if(matchesregex.contains(find)) {
+			System.out.println(matchesregex.toString());
 			return matchesregex;
-		} else {
-			return matches;
-		}
+			
+		} 
+			
 		
 	}
-
+		}
+		return matches;
+	}
 }
+		
+
+
+	

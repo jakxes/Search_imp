@@ -1,11 +1,16 @@
-package de.jakxes.search;
+ package de.jakxes.search;
+
 
 import java.awt.FlowLayout;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.RectangularShape;
 import java.io.File;
+import java.lang.Object;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -13,8 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
-
-import java.lang.Object;
 
 
 
@@ -27,7 +30,7 @@ public class Search extends JFrame implements ActionListener {
 	JLabel lblText = new JLabel();
 	JLabel label2 = new JLabel();
 	JScrollPane scrollpane = new JScrollPane(textfeld);
-	TextField tf = new TextField("", 30);
+	public static TextField tf = new TextField("", 30);
 	JButton button = new JButton("suchen");
 	File selectedRoot = (File) cmbMessageList.getSelectedItem();
 	Thread thread;
@@ -57,7 +60,7 @@ public class Search extends JFrame implements ActionListener {
 					StringBuilder str2 = new StringBuilder();
 					for (String s : filesstr) 
 						str2.append(s + "\n");
-					textfeld.setText(str2.toString());
+					
 					textfeld.setLineWrap(true);
 					textfeld.setWrapStyleWord(true);
 					int size = 0;
@@ -71,7 +74,29 @@ public class Search extends JFrame implements ActionListener {
 					textfeld.setEditable(false);
 					JScrollPane scroll = new JScrollPane(textfeld);
 					scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-					scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);		
+					scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);	
+					char[] strc = tf.getText().toCharArray();
+					String acceptedFiles = null;
+						
+					
+					StringBuilder builder = new StringBuilder();
+					for (int i = 0; i < strc.length; i++) {
+						
+						if(strc[i] == '?') {
+							builder.append("(.)");
+						} else if(strc[i] == '*') {
+							builder.append("(.*)");
+						} else {
+							builder.append(strc[i]);
+						}
+						
+					}
+					
+					Pattern p = Pattern.compile( builder.toString() );
+					
+						builder.append(p.toString());
+						System.out.println(p.toString());
+					
 					add(scroll);
 
 				}
@@ -105,36 +130,19 @@ public class Search extends JFrame implements ActionListener {
 
 	public static ArrayList<File> searchFile(File dir, String find) {
 		File[] files = dir.listFiles();
-		ArrayList<File> matchesregex = new ArrayList<>();
- 		for (File file : files) {
-			if(file.toString().matches(find)) {
-				matchesregex.add(file);
-			}
-		}
 		ArrayList<File> matches = new ArrayList<File>();
 		if (files != null) {
 			for (int i = 0; i < files.length; i++) {
-				
-				if (files[i].getName().contains(find)) {
-					matches.add(files[i]);
-				
-				if (files[i].isDirectory())
-					matches.addAll(searchFile(files[i], find)); 
-				
+				if (files[i].getName().contains(find)) matches.add(files[i]);
+				if (files[i].isDirectory()) matches.addAll(searchFile(files[i], find)); 
 			}
-		if(matchesregex.contains(find)) {
-			System.out.println(matchesregex.toString());
-			return matchesregex;
-			
-		} 
-			
-		
-	}
 		}
 		return matches;
 	}
-}
-		
-
-
 	
+	public static void convertWildcardToRegex() {
+		
+		
+	}
+
+}

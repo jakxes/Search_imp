@@ -76,16 +76,16 @@ public class Search extends JFrame implements ActionListener {
 					scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 					scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);	
 					char[] strc = tf.getText().toCharArray();
-					String acceptedFiles = null;
+					String acceptedFiles = "";
 						
 					
 					StringBuilder builder = new StringBuilder();
 					for (int i = 0; i < strc.length; i++) {
 						
 						if(strc[i] == '?') {
-							builder.append("(.)");
+							builder.append(".");
 						} else if(strc[i] == '*') {
-							builder.append("(.*)");
+							builder.append(".*");
 						} else {
 							builder.append(strc[i]);
 						}
@@ -94,8 +94,8 @@ public class Search extends JFrame implements ActionListener {
 					
 					Pattern p = Pattern.compile( builder.toString() );
 					
-						builder.append(p.toString());
-						System.out.println(p.toString());
+						acceptedFiles += strc.toString();
+						System.out.println(acceptedFiles);
 					
 					add(scroll);
 
@@ -140,9 +140,6 @@ public class Search extends JFrame implements ActionListener {
 		return matches;
 	}
 	
-	public static void convertWildcardToRegex() {
-		
-		
-	}
+	
 
 }

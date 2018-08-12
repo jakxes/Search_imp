@@ -35,7 +35,7 @@ public class Search extends JFrame implements ActionListener {
 	File selectedRoot = (File) cmbMessageList.getSelectedItem();
 	Thread thread;
 	static String acceptedFiles = "";
-	static char[] strc = tf.getText().toCharArray();
+	static char[] strc;
 	
 	
 	public static void main(String[] args) {
@@ -65,7 +65,7 @@ public class Search extends JFrame implements ActionListener {
 					if(!files.isEmpty()) {
 						textfeld.setText(str2.toString());
 					} else 
-						textfeld.setText("Es wurden keine Dateien gefunden werden.");
+						textfeld.setText("Es wurden keine Dateien gefunden.");
 					textfeld.setLineWrap(true);
 					textfeld.setWrapStyleWord(true);
 					int size = 0;
@@ -114,6 +114,7 @@ public class Search extends JFrame implements ActionListener {
 	public static ArrayList<File> searchFile(File dir, String find) {
 		File[] files = dir.listFiles();
 		StringBuilder builder = new StringBuilder();
+		strc = find.toCharArray();
 		for (int i = 0; i < strc.length; i++) {
 			
 			if(strc[i] == '?') {
@@ -126,12 +127,14 @@ public class Search extends JFrame implements ActionListener {
 		}
 		Pattern p = Pattern.compile( builder.toString() );
 		Matcher m;
-
+		
 		ArrayList<File> matches = new ArrayList<File>();
 		if (files != null) {
 			for (int i = 0; i < files.length; i++) {
 				m = p.matcher(files[i].getName());
-				System.out.println(m.toMatchResult().toString());
+				if(m != null && m.find()) {
+					matches.add(files[i]);
+				}
  				
 				
 				if (files[i].isDirectory()) matches.addAll(searchFile(files[i], find)); 

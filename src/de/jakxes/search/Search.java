@@ -5,10 +5,9 @@ import java.awt.FlowLayout;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.RectangularShape;
 import java.io.File;
-import java.lang.Object;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
@@ -18,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
+import java.lang.Object;
 
 
 
@@ -30,10 +30,12 @@ public class Search extends JFrame implements ActionListener {
 	JLabel lblText = new JLabel();
 	JLabel label2 = new JLabel();
 	JScrollPane scrollpane = new JScrollPane(textfeld);
-	public static TextField tf = new TextField("", 30);
-	JButton button = new JButton("suchen");
+	static TextField tf = new TextField("", 30);
+	JButton button = new JButton("Find");
 	File selectedRoot = (File) cmbMessageList.getSelectedItem();
 	Thread thread;
+	static String acceptedFiles = "";
+	static char[] strc = tf.getText().toCharArray();
 	
 	
 	public static void main(String[] args) {
@@ -60,7 +62,10 @@ public class Search extends JFrame implements ActionListener {
 					StringBuilder str2 = new StringBuilder();
 					for (String s : filesstr) 
 						str2.append(s + "\n");
-					
+					if(!files.isEmpty()) {
+						textfeld.setText(str2.toString());
+					} else 
+						textfeld.setText("Es wurden keine Dateien gefunden werden.");
 					textfeld.setLineWrap(true);
 					textfeld.setWrapStyleWord(true);
 					int size = 0;
@@ -74,29 +79,7 @@ public class Search extends JFrame implements ActionListener {
 					textfeld.setEditable(false);
 					JScrollPane scroll = new JScrollPane(textfeld);
 					scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-					scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);	
-					char[] strc = tf.getText().toCharArray();
-					String acceptedFiles = "";
-						
-					
-					StringBuilder builder = new StringBuilder();
-					for (int i = 0; i < strc.length; i++) {
-						
-						if(strc[i] == '?') {
-							builder.append(".");
-						} else if(strc[i] == '*') {
-							builder.append(".*");
-						} else {
-							builder.append(strc[i]);
-						}
-						
-					}
-					
-					Pattern p = Pattern.compile( builder.toString() );
-					
-						acceptedFiles += strc.toString();
-						System.out.println(acceptedFiles);
-					
+					scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);		
 					add(scroll);
 
 				}
@@ -130,16 +113,31 @@ public class Search extends JFrame implements ActionListener {
 
 	public static ArrayList<File> searchFile(File dir, String find) {
 		File[] files = dir.listFiles();
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < strc.length; i++) {
+			
+			if(strc[i] == '?') {
+				builder.append(".");
+			} else if(strc[i] == '*') {
+				builder.append(".*");
+			} else {
+				builder.append(strc[i]);
+			}
+		}
+		Pattern p = Pattern.compile( builder.toString() );
+		Matcher m;
+
 		ArrayList<File> matches = new ArrayList<File>();
 		if (files != null) {
 			for (int i = 0; i < files.length; i++) {
-				if (files[i].getName().contains(find)) matches.add(files[i]);
+				m = p.matcher(files[i].getName());
+				System.out.println(m.toMatchResult().toString());
+ 				
+				
 				if (files[i].isDirectory()) matches.addAll(searchFile(files[i], find)); 
 			}
 		}
 		return matches;
 	}
-	
-	
 
 }
